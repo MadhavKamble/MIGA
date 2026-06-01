@@ -1,0 +1,82 @@
+{
+  "Wine": {
+    "n": 178,
+    "p": 13,
+    "pct": 40,
+    "cols": [
+      "alcohol",
+      "malic_acid",
+      "ash",
+      "alcalinity_of_ash",
+      "magnesium",
+      "total_phenols",
+      "flavanoids",
+      "nonflavanoid_phenols",
+      "proanthocyanins",
+      "color_intensity",
+      "hue",
+      "od280/od315_of_diluted_wines",
+      "proline"
+    ],
+    "miss_cols": [
+      "alcohol",
+      "malic_acid",
+      "ash",
+      "magnesium",
+      "nonflavanoid_phenols",
+      "od280/od315_of_diluted_wines"
+    ],
+    "true_var": {
+      "alcohol": 0.6590623278105759,
+      "malic_acid": 1.2480154034152224,
+      "ash": 0.07526463530756046,
+      "magnesium": 203.98933536469244,
+      "nonflavanoid_phenols": 0.015488633911001078,
+      "od280/od315_of_diluted_wines": 0.5040864089379801
+    },
+    "Mean": {
+      "ratios": {
+        "alcohol": 0.6561421075883752,
+        "malic_acid": 0.7228381136032664,
+        "ash": 0.6596743647297341,
+        "magnesium": 0.7543196877762162,
+        "nonflavanoid_phenols": 0.5620414143234472,
+        "od280/od315_of_diluted_wines": 0.5856066568946895
+      },
+      "mean_ratio": 0.6567703908192881
+    },
+    "KNN": {
+      "ratios": {
+        "alcohol": 0.8542109088857328,
+        "malic_acid": 0.8067059785109263,
+        "ash": 0.7369009140856639,
+        "magnesium": 0.9152046962697965,
+        "nonflavanoid_phenols": 0.6638673368786616,
+        "od280/od315_of_diluted_wines": 0.7178967030980925
+      },
+      "mean_ratio": 0.7824644229548122
+    },
+    "MICE": {
+      "ratios": {
+        "alcohol": 0.9030928304359621,
+        "malic_acid": 0.992052841010535,
+        "ash": 0.803396232686177,
+        "magnesium": 0.8079850875523046,
+        "nonflavanoid_phenols": 0.6561103612005627,
+        "od280/od315_of_diluted_wines": 0.9324642552186614
+      },
+      "mean_ratio": 0.8491836013507005
+    },
+    "MIGA": {
+      "ratios": {
+        "alcohol": 1.0757748337917512,
+        "malic_acid": 1.2797322754031475,
+        "ash": 0.8418487913486328,
+        "magnesium": 0.9505209986544032,
+        "nonflavanoid_phenols": 0.9019533186375235,
+        "od280/od315_of_diluted_wines": 0.9815166737582461
+      },
+      "mean_ratio": 1.0052244819322838
+    }
+  }
+}

@@ -1,0 +1,238 @@
+\frontmatter% Use roman page numbering style (i, ii, iii, iv...) for the pre-content pages
+
+\pagestyle{plain} % Default to the plain heading style until the thesis style is called for the body content
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\begin{titlepage}
+\begin{center}
+\begin{spacing}{1.2}
+
+{\huge \bfseries \ttitle\par}  % ← Uses thesis title from main.tex
+
+\vspace {5mm}
+\textit{A thesis submitted in partial fulfillment of the requirements\\for the award of the degree of} 
+
+\vspace{7mm}
+\textsc{\huge \MakeUppercase{\degreename}}  % ← Uses degree from main.tex
+
+\vspace {3mm}
+% Logo display - no figure environment needed on title page
+
+\includegraphics[width=5cm]{Figures/IIITA_Logo.jpg}
+
+\vspace{5mm}
+% ************************************
+\large
+\begin{tabular}{r@{\hspace{1.5cm}}l}
+    \textit{By:-} & \textsc{\studentnamesformatted} \\[3mm]
+    \textit{Enrollment No.} & \textsc{\rollnumbersformatted} \\
+\end{tabular}
+\\[1cm]
+% *************************************
+
+\textit{Under the Supervision of}\\[2mm]
+\textsc{\Large \supname}\\% ← Uses supervisor name from main.tex
+\vspace{7mm}
+\textit{to the}\\[2mm]
+\textsc{\Large \deptname}\\ % ← Uses department from main.tex
+
+\vspace{8mm}
+% Hindi text commented out for pdfLaTeX compatibility
+% \begin{hindi}
+%     \textsc{\Large {भारतीय सूचना प्रौद्योगिकी संस्थान, इलाहाबाद}} \\
+% \end{hindi}
+% \vspace{3mm}
+\textsc{\Large \univname} % ← Uses university from main.tex
+
+\vspace{5mm}
+\today
+
+
+\end{spacing}
+\end{center}
+\end{titlepage}
+
+
+%----------------------------------------------------------------------------------------
+%	CERTIFICATE
+%----------------------------------------------------------------------------------------
+\checktoopen
+\begin{figure}[htp]
+    % \centering
+    \includegraphics[width=\textwidth,height=3cm,keepaspectratio]{Figures/IIITA_Header.png}
+\end{figure}
+% \string\setblankpagestyle \space
+\thispagestyle{empty}
+\vspace*{.06\textheight}
+
+\begin{spacing}{1.5}
+\begin{center}
+    {\centering\large\bfseries CERTIFICATE \par\vspace{10pt}}
+\end{center}
+
+\noindent It is certified that the work contained in the thesis titled \enquote{\ttitle} by {\studentnamescomma} has been carried out under my supervision and that this work has not been submitted elsewhere for a degree.
+% ↑ Uses title and student names from main.tex
+
+\vspace{3.5cm}
+\hfill\begin{minipage}{7.5cm}   %{0.52\linewidth}
+    \begin{spacing}{1.2}
+        \par
+        \rule{\textwidth}{0.2pt}\\
+        {\supname} \par  % ← Uses supervisor name from main.tex
+        {\deptname}  \par  % ← Uses department from main.tex
+        IIIT Allahabad \par
+    \end{spacing}
+\end{minipage}
+
+\end{spacing}
+% \end{certificate}
+\cleardoublepage
+
+%----------------------------------------------------------------------------------------
+%	DECLARATION
+%----------------------------------------------------------------------------------------
+\checktoopen
+\begin{figure}[htp]
+    % \centering
+    \includegraphics[width=\textwidth,height=3cm,keepaspectratio]{Figures/IIITA_Header.png}
+\end{figure}
+% \string\setblankpagestyle \space
+\thispagestyle{empty}
+\vspace{1mm}
+
+\begin{center}
+    {\large\bfseries CANDIDATE DECLARATION}
+\end{center}
+
+\begin{spacing}{1.2}
+
+\noindent \pronounwe, \studentnamesdeclaration, hereby certify that the thesis titled \enquote{\ttitle} has been submitted by \pronounour{} in partial fulfillment of the requirements for the Degree of \degreename{} in the \deptname{} at the \univname.
+% ↑ Uses pronouns and names from main.tex - automatically adjusts for single/multiple students
+
+\par
+\noindent We acknowledge that plagiarism includes: 
+\begin{enumerate} 
+    \item Reproducing another person's work (fully or partially) or ideas and presenting them as our own.
+    \item Copying or paraphrasing another person's work without appropriate attribution.
+    \item Engaging in literary theft by reproducing a unique literary construct without crediting its source.
+\end{enumerate}
+\par
+We affirm that due credit has been given to all original authors and sources through proper citations for words, ideas, diagrams, graphics, computer programs, experiments, results, and websites that are not our own contributions. Direct quotations have been appropriately marked, and sources have been properly referenced. Furthermore, we declare that no portion of our work is plagiarized. In the event of a plagiarism claim, we accept full responsibility for the contents of this thesis. We acknowledge that our supervisor may not be able to verify the originality of every aspect of our work.
+\end{spacing}
+
+\begin{spacing}{2.0}
+% \vspace{1cm}
+\noindent
+\begin{minipage}[t]{0.4\textwidth}  
+    \begin{flushleft} 
+        Place: \rule{40mm}{0.1pt}\\
+    \end{flushleft}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.4\textwidth}
+    \begin{flushright}         
+        Date: \rule{40mm}{0.1pt}\\       
+    \end{flushright}
+\end{minipage}
+% \rule{\textwidth}{0.1pt}\\
+\par
+{\studentsignatures} % ← Uses student names and rolls from main.tex
+\end{spacing}
+
+
+        
+\cleardoublepage
+
+
+
+%----------------------------------------------------------------------------------------
+%	QUOTATION PAGE
+%----------------------------------------------------------------------------------------
+
+% \vspace*{0.2\textheight}
+% \begin{spacing}{1.5}
+% \noindent\enquote{\itshape Thanks to my solid academic training, today I can write hundreds of words on virtually any topic without possessing a shred of information, which is how I also got a good job in industry.}\bigbreak
+
+% \hfill {\firstauthorname}
+% \end{spacing}
+% \cleardoublepage
+
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT PAGE
+%----------------------------------------------------------------------------------------
+
+\begin{abstract}
+\begin{spacing}{2}
+
+\addchaptertocentry{\abstractname} % Add the abstract to the table of contents
+
+We prove that distributional fidelity and pointwise accuracy are structurally orthogonal objectives in missing data imputation: no single method can simultaneously minimise both. The RMSE-minimising imputation (conditional expectation) must have strictly positive distributional distance $F_r$ by the law of total variance; conversely, any $F_r$-zero imputation must have positive RMSE unless the missing values follow the same marginal distribution as the observed data. We further show this impossibility extends to neural methods: for GAIN (Generative Adversarial Imputation Networks), no reconstruction weight $\alpha > 0$ allows joint minimisation of $F_r$ and RMSE, establishing C2 as a \emph{universal impossibility theorem} for imputation.
+
+We validate these results through a comprehensive evaluation of MIGA (Missing data Imputation via Genetic Algorithm), which directly optimises $F_r$ --- a fitness function penalising discrepancies in means, covariances, and skewness --- against MICE, KNN, and GAIN across five UCI benchmark datasets (Iris, Wine, Glass, Haberman, Wholesale) at 30\% MAR. MIGA achieves 1.5--2.0$\times$ lower $F_r$ than MICE on low-dimensional datasets (Wilcoxon $p < 0.001$), while MICE achieves 1.4--2.1$\times$ lower RMSE on every dataset. An empirical $\alpha$-sweep for GAIN ($\alpha \in \{0, 1, 10, 100, 1000, 10000\}$, all 5 datasets) confirms the impossibility holds across all reconstruction weights, revealing three failure regimes: monotone-but-off-frontier on Iris and Wine, training instability at high $\alpha$ on Haberman, and domination by MICE on both metrics on Glass.
+
+Four additional findings characterise the scope and limits of MIGA's advantage. First, a \emph{dimension--correlation interaction} governs MIGA's advantage: a controlled $p \times \rho$ grid shows MIGA wins for $p \leq 13$ at $\rho \leq 0.6$ but loses at $\rho = 0.9$ even for $p = 8$. Second, \emph{directional MNAR} produces a striking inversion: under top-quantile missingness on Haberman, MIGA simultaneously achieves the global minimum $F_r$ (0.810) and global maximum RMSE (0.384). Third, \emph{Adaptive Diversity Injection} (AD-MIGA) replaces the fixed 90\% injection rate with an exponential decay schedule $\alpha(g) = \exp(-\lambda g / G)$, achieving lower $F_r$ on all 3 tested datasets and converging 33 generations earlier on average. Fourth, downstream evaluation shows MIGA's distributional advantage propagates to valid statistical inference on well-conditioned datasets (40--100\% KS-test pass rate, 70--95\% bootstrap CI coverage).
+
+The thesis delivers nine contributions: the first open-source reimplementation of MIGA; the first formal proof of $F_r$--RMSE orthogonality; the first MNAR evaluation of MIGA; the first controlled $p \times \rho$ characterisation; propensity-score-weighted IPW-$F_r$ (reduces $F_r$ by 1--38\% when $n/p \gtrsim 20$); AD-MIGA adaptive diversity injection; universal orthogonality via GAIN comparison and full $\alpha$-sweep; and near-linear parallel speedup (1.94--1.98$\times$ at Q=2) via \texttt{n\_jobs}.
+
+\end{spacing}
+\end{abstract}
+
+%----------------------------------------------------------------------------------------
+%	ACKNOWLEDGEMENTS
+%----------------------------------------------------------------------------------------
+
+\begin{acknowledgements}
+\begin{spacing}{1.5}
+\addchaptertocentry{\acknowledgementname} % Add the acknowledgements to the table of contents
+
+I would like to express my sincere gratitude to my supervisor, \supname, for his guidance, encouragement, and insightful feedback throughout this project. His direction helped sharpen the research focus and strengthened the experimental methodology considerably.
+
+I am grateful to the Department of Information Technology at \univname{} for providing the computational resources and academic environment that made this work possible.
+
+I thank the authors of Figueroa-Garc\'ia et al.\ (2023) for making the MIGA algorithm description sufficiently detailed to permit independent reimplementation. The UCI Machine Learning Repository provided all datasets used in this study.
+
+Finally, I thank my family and friends for their patience and support during the course of this programme.
+
+\end{spacing}
+\end{acknowledgements}
+
+%----------------------------------------------------------------------------------------
+%	LIST OF CONTENTS/FIGURES/TABLES PAGES
+%----------------------------------------------------------------------------------------
+
+\tableofcontents % Prints the main table of contents
+
+\listoffigures % Prints the list of figures
+
+
+\listoftables % Prints the list of tables
+
+
+%----------------------------------------------------------------------------------------
+%	ABBREVIATIONS
+%----------------------------------------------------------------------------------------
+
+\begin{abbreviations}{ll} % Include a list of abbreviations (a table of two columns)
+
+\textbf{AD-MIGA} & \textbf{A}daptive \textbf{D}iversity injection \textbf{MIGA} \\
+\textbf{CI}   & \textbf{C}onfidence \textbf{I}nterval \\
+\textbf{GA}   & \textbf{G}enetic \textbf{A}lgorithm \\
+\textbf{GAIN} & \textbf{G}enerative \textbf{A}dversarial \textbf{I}mputation \textbf{N}etworks \\
+\textbf{$F_r$} & Fr\'{e}chet-inspired distributional \textbf{F}itness function \\
+\textbf{IPW}  & \textbf{I}nverse \textbf{P}robability \textbf{W}eighting \\
+\textbf{KNN}  & \textbf{K}-\textbf{N}earest \textbf{N}eighbours \\
+\textbf{KS}   & \textbf{K}olmogorov-\textbf{S}mirnov (test) \\
+\textbf{LW}   & \textbf{L}edoit-\textbf{W}olf (covariance shrinkage) \\
+\textbf{MAR}  & \textbf{M}issing \textbf{A}t \textbf{R}andom \\
+\textbf{MCAR} & \textbf{M}issing \textbf{C}ompletely \textbf{A}t \textbf{R}andom \\
+\textbf{MICE} & \textbf{M}ultiple \textbf{I}mputation by \textbf{C}hained \textbf{E}quations \\
+\textbf{MIGA} & \textbf{M}issing data \textbf{I}mputation via \textbf{G}enetic \textbf{A}lgorithm \\
+\textbf{MNAR} & \textbf{M}issing \textbf{N}ot \textbf{A}t \textbf{R}andom \\
+\textbf{NRMSE}& \textbf{N}ormalised \textbf{R}oot \textbf{M}ean \textbf{S}quared \textbf{E}rror \\
+\textbf{RMSE} & \textbf{R}oot \textbf{M}ean \textbf{S}quared \textbf{E}rror \\
+\textbf{UCI}  & \textbf{U}niversity of \textbf{C}alifornia, \textbf{I}rvine (ML Repository) \\
+
+\end{abbreviations}

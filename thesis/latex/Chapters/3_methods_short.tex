@@ -1,0 +1,162 @@
+% Chapter 3 — Methodology (condensed)
+
+\chapter{Methodology}
+\label{Chapter3}
+
+\section{Overview}
+
+This chapter describes the complete implementation of MIGA from the paper specification, documents every decision made where the paper is ambiguous or silent, and presents the novel extensions: IPW-$F_r$ for MNAR bias correction (C6, Section~\ref{sec:ipw_implementation}) and the synthetic dimension experiment (C5, Section~\ref{sec:synthetic_dim_methods}).
+
+All code is implemented in Python 3.12 using NumPy, SciPy, and scikit-learn, structured as a \texttt{miga/} package.
+
+\begin{table}[h]
+\caption{Python package module structure.}
+\label{tab:modules}
+\centering
+\begin{tabular}{lp{9.5cm}}
+\toprule
+\textbf{Module} & \textbf{Responsibility} \\
+\midrule
+\texttt{miga/statistics.py} & Statistical primitives: \texttt{compute\_stats}, \texttt{weighted\_mean}, \texttt{weighted\_cov}, \texttt{weighted\_skewness} \\
+\texttt{miga/fitness.py}    & \texttt{FitnessEvaluator}: pre-computes $X_A$ statistics, evaluates $F_r$ (with optional IPW weighting) \\
+\texttt{miga/operators.py}  & \texttt{initialize\_population}, \texttt{mutate}, \texttt{crossover}, \texttt{diversity\_inject} \\
+\texttt{miga/core.py}       & \texttt{MIGA}: top-level estimator, orchestrates $Q$ independent runs \\
+\texttt{miga/data\_utils.py}& Dataset loaders, \texttt{apply\_mar}, \texttt{apply\_mnar}, \texttt{auto\_generators} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{MIGA Reimplementation (C1)}
+
+\subsection{Population Representation}
+
+Each individual in the GA population represents a complete candidate imputation for all missing cells in the dataset. If the dataset has $k$ missing cells (across all rows in $X_C$), an individual is a flat vector of $k$ real numbers. A pre-computed index \texttt{missing\_index} maps each vector position to its (row, column) location. The population is stored as a 2D array of shape $(l \times k)$.
+
+\subsection{Fitness Evaluation}
+
+The fitness function $F_r$ is evaluated by \texttt{FitnessEvaluator}, which pre-computes all $X_A$ statistics at initialisation (mean, covariance, skewness) and evaluates each candidate $X_C$ efficiently. Feature scaling is applied before all computations.
+
+The three $F_r$ terms follow Equations 5--10 of the original paper \cite{FigueroaGarcia2023}:
+
+\begin{equation}
+    d_{\text{means}} = D_r\!\left(\tilde{x}_A,\, \tilde{x}_C\right), \quad \tilde{x} = \bar{x} / S_p
+\end{equation}
+\begin{equation}
+    d_{\text{cov}} = D_r\!\left(\tilde{S},\, I\right), \quad \tilde{S} = S_A^{-1/2} S_C S_A^{-1/2}
+\end{equation}
+\begin{equation}
+    d_{\text{skew}} = D_r\!\left(b_A,\, b_C\right)
+\end{equation}
+
+All use Chebyshev distance ($r = \infty$): $D_\infty(A, B) = \max_{i,j} |a_{ij} - b_{ij}|$.
+
+\subsection{Feature Scaling}
+
+\textbf{Problem.} Wine's Proline feature has variance $\sigma^2 \approx 10^5$ while other features have $\sigma^2 \approx 1$. Without scaling, the condition number of $S_A$ reaches $4 \times 10^7$, making $S_A^{-1/2}$ numerically meaningless and $d_{\text{cov}}(X_A, X_A) \neq 0$ even when both arguments are the same set.
+
+\textbf{Solution.} Before computing any statistics, each column is divided by $\hat{\sigma}_j = \text{std}(X_A[:,j])$, estimated from $X_A$ alone to avoid data leakage from $X_C$. After scaling, Wine's condition number drops from $4 \times 10^7$ to 158 and $d_{\text{cov}}(X_A, X_A) = 0.000$.
+
+\subsection{Genetic Algorithm Operators}
+
+\textbf{Selection.} The top-$c$ individuals (lowest $F_r$) are retained as elites unchanged (elitism).
+
+\textbf{Mutation.} Each of $c_1$ elites produces $c_3$ mutated copies. A mutated copy is identical to its parent except that one randomly chosen gene (one missing cell value) is replaced by a fresh bootstrap sample from $R_j$ for the corresponding column $j$.
+
+\textbf{Crossover.} $c_2$ crossover offspring are produced by uniform crossover of random pairs drawn from the elites. Each gene of the offspring is taken from one parent with probability 0.5.
+
+\textbf{Diversity injection.} The remaining population slots ($\approx$90\% under default parameters) are filled with fresh random individuals sampled entirely from the per-variable generators. This is the dominant exploration operator.
+
+\textbf{Multi-run strategy.} MIGA runs $Q$ independent GA instances on the same dataset, each with a different random seed. The best individual across all $Q$ runs is returned as the final imputation. The full convergence curve (best $F_r$ per generation per run) is stored for analysis.
+
+\subsection{Key Implementation Decisions}
+
+Table~\ref{tab:decisions} summarises the decisions made where the original paper is ambiguous. The most consequential are:
+
+\textbf{Feature scaling.} Wine's Proline feature has variance $\sim 10^5$ vs $\sim 1$ for other features. Without scaling, the condition number of $S_A$ reaches $4 \times 10^7$, making $S_A^{-1/2}$ meaningless. Dividing each column by $\hat{\sigma}_j$ (from $X_A$) reduces the condition number to 158.
+
+\textbf{Bootstrap generators.} The paper specifies generators ``from samples'' of observed values. We interpret this as bootstrap resampling from the empirical distribution. This is essential for Haberman's Nodes column, which has 44\% zeros: a Gaussian generator never produces zero, but bootstrap sampling correctly preserves the discrete marginal.
+
+\textbf{Eigenvalue floor.} For datasets where $n_A < p$ (Wine at 40\%), eigenvalues of $S_A$ are floored before computing $S_A^{-1/2}$ to prevent division by near-zero values. This is a numerical stability measure; RMSE is not improved since the sample is statistically insufficient.
+
+\begin{table}[h]
+\caption{Implementation decisions not specified in the original paper.}
+\label{tab:decisions}
+\centering
+\begin{tabular}{p{2.5cm}p{2.8cm}p{5.8cm}p{2.2cm}}
+\toprule
+\textbf{Decision} & \textbf{Paper spec.} & \textbf{Our implementation} & \textbf{Effect} \\
+\midrule
+Feature scaling       & Not mentioned  & Divide by $\hat{\sigma}_j$ from $X_A$ & Stabilises $d_{\text{cov}}$; required for Wine \\
+Eigenvalue floor      & Not mentioned  & $\lambda_{\min} = \max(\lambda_{\max} \times 10^{-4}, 10^{-10})$ & Prevents division by zero \\
+Generator type        & ``From samples'' & Bootstrap from observed values & Preserves discrete marginals \\
+Stopping criterion    & Not specified  & Fixed schedule: $Q$ runs $\times$ $G$ generations & Matches paper's approach \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Ledoit-Wolf Shrinkage Covariance}
+\label{sec:lw}
+
+\subsection{The Rank-Deficiency Problem}
+
+The relative covariance term $d_{\text{cov}} = D_r(S_A^{-1/2} S_C S_A^{-1/2}, I)$ requires computing $S_A^{-1/2}$, which is undefined when $S_A$ is rank-deficient. $S_A$ becomes rank-deficient when $n_A < p$ --- when the number of complete rows is smaller than the number of features. For Wine at 40\% missing, only $n_A = 11$ complete rows remain for $p = 13$ features. The sample covariance has condition number $5.7 \times 10^8$ and $d_{\text{cov}}(X_A, X_A) = 0.606$ --- a mathematical impossibility since $d_{\text{cov}}$ must equal zero when both arguments are identical.
+
+\subsection{The Ledoit-Wolf Estimator}
+
+The Ledoit-Wolf (2004) shrinkage estimator \cite{LedoitWolf2004} replaces the sample covariance with a convex combination of the sample estimate and a scaled identity:
+
+\begin{equation}
+    S_{\text{LW}} = (1 - \alpha)\, S_{\text{sample}} + \alpha \cdot \frac{\text{tr}(S_{\text{sample}})}{p} \cdot I
+\end{equation}
+
+where $\alpha \in [0, 1]$ is the shrinkage coefficient chosen analytically. Since the target $(\text{tr}(S)/p) \cdot I$ is always positive definite, $S_{\text{LW}}$ is positive definite for any $\alpha > 0$. The estimator is applied to \emph{both} $S_A$ and $S_C$ to preserve the invariant $d_{\text{cov}}(X_A, X_A) = 0$.
+
+\begin{table}[h]
+\caption{Wine: sample vs Ledoit-Wolf covariance condition number and $d_{\text{cov}}$ self-consistency.}
+\label{tab:lw}
+\centering
+\begin{tabular}{lllll}
+\toprule
+\textbf{Missing} & $n_A$ & \textbf{Sample cond.} & \textbf{LW cond.} & $d_{\text{cov}}(X_A, X_A)$ \\
+\midrule
+30\% & 23 & 158         & 9.1  & 0.000 \checkmark \\
+40\% & 11 & 570,000,000 & 8.8  & 0.606 (sample) $\to$ 0.000 (LW) \checkmark \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Ledoit-Wolf restores mathematical consistency at 40\% missing. RMSE is not improved --- $n_A = 11$ is a statistically insufficient sample regardless of the covariance estimator --- but the fitness function is no longer numerically degenerate.
+
+\section{MNAR Evaluation Framework (C3)}
+
+All experiments in the original paper assume MAR. We implement three MNAR mechanisms:
+
+\textbf{top:} For each selected feature $j$, the $n_{\text{remove}}$ rows with the highest values are set missing. The remaining complete rows $X_A$ are biased toward low values.
+
+\textbf{bottom:} The rows with the lowest values are set missing.
+
+\textbf{tails:} Half the removals come from each extreme, concentrating $X_A$ near the distribution centre.
+
+Under \texttt{top} MNAR, the fitness function's goal --- make $X_C$ look like $X_A$ --- is equivalent to matching a biased reference. The GA succeeds at minimising $F_r$ (low $F_r$), but the imputed values are systematically too low because the true missing values were high-value rows (high RMSE). This is the $F_r \to$ RMSE inversion predicted by Proposition~\ref{prop:fr_implies_rmse}.
+
+\section{IPW-\texorpdfstring{$F_r$}{Fr} for MNAR Bias Correction (C6)}
+\label{sec:ipw_implementation}
+
+Standard correction for selection bias is inverse probability weighting \cite{HorvitzThompson1952}. Let $\pi_i = P(R_i = 1 \mid X_i)$ be the propensity score for row $i$ being complete. The IPW fitness replaces unweighted $X_A$ statistics with weighted equivalents:
+
+\begin{equation}
+    F_r^{\text{IPW}} = D_r\!\left(\tilde{x}_A^w,\, \tilde{x}_C\right) + D_r\!\left(\tilde{S}^w,\, I\right) + D_r\!\left(b_A^w,\, b_C\right)
+\end{equation}
+
+where weights $w_i = 1/\pi_i$ up-weight under-represented complete rows. Propensity scores are estimated by logistic regression of the binary completeness indicator on all observed features, then floored at $\pi_{\min} = 0.05$ to prevent extreme weights. Weighted mean, covariance, and skewness replace the unweighted statistics in \texttt{FitnessEvaluator}; computational overhead is negligible.
+
+\textbf{Applicability condition.} Logistic regression requires $n/p \gtrsim 20$ for stable estimates. When $n/p \lesssim 14$ (Wine), the propensity model overfits, producing extreme weights that destabilise the weighted covariance. For symmetric mechanisms (MAR, bottom), re-weighting adds variance without correcting bias.
+
+\section{Synthetic Dimension Experiment (C5)}
+\label{sec:synthetic_dim_methods}
+
+The five UCI benchmarks confound dimensionality and correlation structure. To isolate their effects, we generate synthetic data from $p$-dimensional multivariate Gaussians $\mathcal{N}(\mu, \Sigma)$ with Toeplitz covariance:
+\begin{equation}
+    \Sigma_{ij} = \rho^{|i-j|}, \quad \rho \in [0, 1)
+\end{equation}
+giving uniform pairwise correlation $\rho$ across all feature pairs. We use $n = 200$, 30\% MCAR, and sweep $p \in \{4, 8, 13, 20, 30\}$ and $\rho \in \{0, 0.3, 0.6, 0.9\}$ (20-cell grid, 5 seeds per cell). The metric is the relative $F_r$ advantage: $\Delta F_r\% = 100 \times (F_r^{\text{MICE}} - \bar{F}_r^{\text{MIGA}}) / F_r^{\text{MICE}}$, where positive means MIGA wins.

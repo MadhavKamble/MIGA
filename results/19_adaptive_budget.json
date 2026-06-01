@@ -1,0 +1,170 @@
+{
+  "Iris": {
+    "standard": {
+      "Fr": 0.3769999109461486,
+      "rmse": 0.12700915762285084,
+      "mad": 0.09058641975308641,
+      "cod": 0.9770902941805825,
+      "n_runs": 5,
+      "total_gens": 2500,
+      "avg_gens_per_run": 500.0,
+      "elapsed_sec": 526.1220955848694
+    },
+    "aes": {
+      "Fr": 0.3768686503478613,
+      "rmse": 0.12185844091697987,
+      "mad": 0.09182098765432098,
+      "cod": 0.9800255543752548,
+      "n_runs": 11,
+      "total_gens": 2500,
+      "avg_gens_per_run": 227.27272727272728,
+      "elapsed_sec": 497.4217598438263
+    },
+    "n": 150,
+    "p": 4,
+    "cols": [
+      "sepal length (cm)",
+      "sepal width (cm)",
+      "petal length (cm)",
+      "petal width (cm)"
+    ]
+  },
+  "Wine": {
+    "standard": {
+      "Fr": 3.1326517822287876,
+      "rmse": 0.2972848711696312,
+      "mad": 0.22972207962652572,
+      "cod": 0.9984382805234139,
+      "n_runs": 5,
+      "total_gens": 2500,
+      "avg_gens_per_run": 500.0,
+      "elapsed_sec": 956.9036705493927
+    },
+    "aes": {
+      "Fr": 2.8589431490167927,
+      "rmse": 0.3080162090165472,
+      "mad": 0.24599896901791893,
+      "cod": 0.9979817230607094,
+      "n_runs": 5,
+      "total_gens": 2500,
+      "avg_gens_per_run": 500.0,
+      "elapsed_sec": 710.7884001731873
+    },
+    "n": 178,
+    "p": 13,
+    "cols": [
+      "alcohol",
+      "malic_acid",
+      "ash",
+      "alcalinity_of_ash",
+      "magnesium",
+      "total_phenols",
+      "flavanoids",
+      "nonflavanoid_phenols",
+      "proanthocyanins",
+      "color_intensity",
+      "hue",
+      "od280/od315_of_diluted_wines",
+      "proline"
+    ]
+  },
+  "Glass": {
+    "standard": {
+      "Fr": 27.897598199618198,
+      "rmse": 0.16557430495222503,
+      "mad": 0.11698891866646129,
+      "cod": 0.9522145504058709,
+      "n_runs": 5,
+      "total_gens": 2500,
+      "avg_gens_per_run": 500.0,
+      "elapsed_sec": 772.391841173172
+    },
+    "aes": {
+      "Fr": 26.6346980755383,
+      "rmse": 0.17070635787168395,
+      "mad": 0.1244215990639697,
+      "cod": 0.9556298592754117,
+      "n_runs": 5,
+      "total_gens": 2500,
+      "avg_gens_per_run": 500.0,
+      "elapsed_sec": 632.659366607666
+    },
+    "n": 214,
+    "p": 10,
+    "cols": [
+      "RI",
+      "Na",
+      "Mg",
+      "Al",
+      "Si",
+      "K",
+      "Ca",
+      "Ba",
+      "Fe",
+      "Type"
+    ]
+  },
+  "Haberman": {
+    "standard": {
+      "Fr": 2.590205399573375,
+      "rmse": 0.3648776895435673,
+      "mad": 0.308039376538146,
+      "cod": 0.3696701637174401,
+      "n_runs": 5,
+      "total_gens": 2500,
+      "avg_gens_per_run": 500.0,
+      "elapsed_sec": 480.2458801269531
+    },
+    "aes": {
+      "Fr": 2.554841763824444,
+      "rmse": 0.42444625950475534,
+      "mad": 0.366078753076292,
+      "cod": 0.14705963530177468,
+      "n_runs": 7,
+      "total_gens": 2500,
+      "avg_gens_per_run": 357.14285714285717,
+      "elapsed_sec": 441.3577973842621
+    },
+    "n": 306,
+    "p": 3,
+    "cols": [
+      "Age",
+      "OpYear",
+      "Nodes"
+    ]
+  },
+  "Wholesale": {
+    "standard": {
+      "Fr": 13.015800129895538,
+      "rmse": 0.1514266802540135,
+      "mad": 0.09767970490776882,
+      "cod": 0.5789406732820386,
+      "n_runs": 5,
+      "total_gens": 2500,
+      "avg_gens_per_run": 500.0,
+      "elapsed_sec": 972.9929163455963
+    },
+    "aes": {
+      "Fr": 12.968983160714858,
+      "rmse": 0.1686506257217016,
+      "mad": 0.11565252220883614,
+      "cod": 0.39079554002367467,
+      "n_runs": 5,
+      "total_gens": 2500,
+      "avg_gens_per_run": 500.0,
+      "elapsed_sec": 768.8657696247101
+    },
+    "n": 440,
+    "p": 8,
+    "cols": [
+      "Channel",
+      "Region",
+      "Fresh",
+      "Milk",
+      "Grocery",
+      "Frozen",
+      "Detergents_Paper",
+      "Delicassen"
+    ]
+  }
+}

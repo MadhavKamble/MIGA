@@ -1,0 +1,49 @@
+{
+  "Iris": {
+    "n": 150,
+    "p": 4,
+    "pct": 50,
+    "cols": [
+      "sepal length (cm)",
+      "sepal width (cm)",
+      "petal length (cm)",
+      "petal width (cm)"
+    ],
+    "miss_cols": [
+      "sepal length (cm)",
+      "petal width (cm)"
+    ],
+    "true_var": {
+      "sepal length (cm)": 0.6856935123042507,
+      "petal width (cm)": 0.5810062639821029
+    },
+    "Mean": {
+      "ratios": {
+        "sepal length (cm)": 0.5487675568098399,
+        "petal width (cm)": 0.46759267459294956
+      },
+      "mean_ratio": 0.5081801157013948
+    },
+    "KNN": {
+      "ratios": {
+        "sepal length (cm)": 0.8735746823053456,
+        "petal width (cm)": 0.9695567591211424
+      },
+      "mean_ratio": 0.9215657207132439
+    },
+    "MICE": {
+      "ratios": {
+        "sepal length (cm)": 0.9307370465812803,
+        "petal width (cm)": 0.9395039351851232
+      },
+      "mean_ratio": 0.9351204908832018
+    },
+    "MIGA": {
+      "ratios": {
+        "sepal length (cm)": 0.9769165266472,
+        "petal width (cm)": 1.0355165650275808
+      },
+      "mean_ratio": 1.0062165458373904
+    }
+  }
+}

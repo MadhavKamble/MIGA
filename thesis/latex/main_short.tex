@@ -1,0 +1,102 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Condensed thesis version (~30-35 pages)
+% Original is main.tex (76 pages) — do not modify that file.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[
+12pt,
+oneside,
+english,
+singlespacing,
+liststotoc,
+parskip,
+headsepline,
+]{Thesis}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{mathpazo}
+\usepackage[backend=bibtex,
+style=numeric,
+bibencoding=utf8,
+]{biblatex}
+\addbibresource{example.bib}
+\usepackage[autostyle=true]{csquotes}
+\usepackage{array}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{booktabs}
+\usepackage{multirow}
+
+\newtheorem{proposition}{Proposition}[chapter]
+\newtheorem{corollary}{Corollary}[proposition]
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\geometry{
+    paper=a4paper,
+    inner=20mm,
+    outer=20mm,
+    bindingoffset=5mm,
+    top=25mm,
+    bottom=20mm,
+}
+
+% ============================================================
+% THESIS DETAILS
+% ============================================================
+\thesistitle{Missing Data Imputation using Genetic Algorithms: A Distributional Approach}
+\degree{Master of Technology}
+
+\supervisor{Dr. Gaurav Srivastava}
+
+\newcommand{\studentonename}{Madhav Umesh Kamble}
+\newcommand{\studentoneroll}{MDE2025008}
+
+\department{Department of Information Technology}
+\university{Indian Institute of Information Technology, Allahabad}
+\subject{Information Technology}
+
+\newcommand{\studentnamesformatted}{\studentonename}
+\newcommand{\rollnumbersformatted}{\studentoneroll}
+\newcommand{\studentnamescomma}{\studentonename}
+\newcommand{\studentnamesdeclaration}{\studentonename{} (\studentoneroll)}
+\newcommand{\studentsignatures}{\studentonename{} (\studentoneroll)}
+\newcommand{\pronounwe}{I}
+\newcommand{\pronounour}{my}
+
+\firstauthor{\studentnamesformatted}
+\enrollmentnumber{\rollnumbersformatted}
+
+\examiner{}
+\addresses{}
+\keywords{}
+\faculty{Faculty Name}
+
+\AtBeginDocument{
+\hypersetup{pdftitle=\ttitle}
+\hypersetup{pdfkeywords=\keywordnames}
+}
+
+\begin{document}
+\begin{sloppypar}
+
+\include{frontmatter}
+
+\mainmatter
+\pagestyle{thesis}
+\begin{spacing}{1.5}
+
+\include{Chapters/1_introduction_short}
+\include{Chapters/2_literature_short}
+\include{Chapters/3_methods_short}
+\include{Chapters/4_results_short}
+\include{Chapters/5_discussion_short}
+
+\end{spacing}
+
+\printbibliography[heading=bibintoc]
+
+\end{sloppypar}
+\end{document}

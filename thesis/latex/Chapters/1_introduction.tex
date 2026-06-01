@@ -1,0 +1,78 @@
+% Chapter 1 — Introduction
+
+\chapter{Introduction}
+\label{Chapter1}
+
+%----------------------------------------------------------------------------------------
+
+\section{Background and Motivation}
+
+Missing data is a pervasive challenge in real-world machine learning and statistical analysis. Medical records omit test results for patients who did not present with relevant symptoms; financial surveys suffer from non-response bias; sensor networks produce gaps due to transmission failures or device faults. The proportion of missing values in real-world datasets commonly ranges from 5\% to 40\% \cite{vanBuuren2018}, and naive strategies for handling missingness can severely compromise the integrity of downstream analyses.
+
+Three broad strategies are typically employed. \textbf{Complete case analysis} discards any observation with at least one missing value, sacrificing statistical power and potentially introducing selection bias. \textbf{Single imputation} (e.g., replacing missing values with column means) fills the gaps with a single plausible value, but distorts the variance structure of the data and treats imputed values as though they were observed. \textbf{Multiple imputation} generates several plausible complete datasets and combines inferences across them, appropriately accounting for the uncertainty introduced by missingness.
+
+Among multiple imputation methods, MICE (Multiple Imputation by Chained Equations; van Buuren and Groothuis-Oudshoorn, 2011) has become the standard \cite{vanBuuren2011}. MICE iteratively regresses each incomplete variable on all other variables, producing imputations that are optimal in the sense of minimising expected squared error. However, this optimality comes at a cost: MICE imputes conditional means, which suppresses marginal variance. Van Buuren (2018, \S2.6) explicitly notes that ``the minimum mean squared error is achieved by regression imputation, which suppresses variance and produces biased statistical inference'' \cite{vanBuuren2018}. For any analysis that requires the correct marginal distribution of the imputed variables --- distributional testing, bootstrap inference, synthetic data generation --- MICE produces systematically distorted results.
+
+This motivates a distributional approach to imputation: rather than minimising pointwise squared error, find imputed values whose \emph{distribution} matches the observed distribution of complete cases. This is precisely the objective of MIGA (Missing data Imputation via Genetic Algorithm).
+
+%----------------------------------------------------------------------------------------
+
+\section{The MIGA Algorithm}
+
+Figueroa-Garc\'ia, Neruda, and Hernandez-P\'erez (2023) proposed MIGA, published in \textit{Information Sciences} \cite{FigueroaGarcia2023}. MIGA frames missing data imputation as an optimisation problem: find the set of imputed values that minimises the statistical distance between the set of complete rows ($X_A$) and the set of rows with at least one missing value after imputation ($X_C$).
+
+The fitness function ($F_r$) is a sum of three Minkowski distances measuring differences in mean vectors, covariance structure, and skewness between $X_A$ and $X_C$:
+
+\begin{equation}
+    F_r = D_r(\tilde{x}_A,\, \tilde{x}_C) + D_r(\tilde{S},\, I) + D_r(b_A,\, b_C)
+    \label{eq:fr}
+\end{equation}
+
+where $\tilde{x}$ denotes standardised means, $\tilde{S} = S_A^{-1/2} S_C S_A^{-1/2}$ is the relative covariance, and $b$ denotes skewness vectors. A genetic algorithm with $l$ individuals over $G$ generations across $Q$ independent runs is used to minimise $F_r$.
+
+MIGA handles mixed variable types (continuous, discrete, binary) natively through variable-specific random generators. It imposes no parametric assumptions on the data distribution and explicitly targets distributional fidelity rather than pointwise accuracy, making it the correct tool when downstream analysis requires correct distributional properties.
+
+However, the original paper provides no public implementation, and several implementation details are underspecified. No systematic comparison against modern baselines (KNN, MICE) is reported, and the algorithm has not been evaluated under Missing Not At Random (MNAR) conditions. This thesis addresses all three gaps.
+
+%----------------------------------------------------------------------------------------
+
+\section{Research Objectives}
+
+This thesis pursues five primary objectives:
+
+\begin{enumerate}
+    \item \textbf{Reproduce MIGA} from scratch, providing the first open-source implementation and verifying replication of the paper's results on five benchmark datasets.
+    \item \textbf{Formally prove the $F_r$--RMSE orthogonality}, establishing that no single imputation can jointly minimise both distributional distance and pointwise error.
+    \item \textbf{Evaluate MIGA under MNAR}, providing the first systematic assessment of MIGA's distributional objective when the missing mechanism is not at random, including an IPW-$F_r$ correction for selection bias.
+    \item \textbf{Characterise when MIGA's $F_r$ advantage holds}, via systematic baseline comparison across five datasets and a controlled $p \times \rho$ synthetic experiment isolating dimensionality and correlation effects.
+\end{enumerate}
+
+%----------------------------------------------------------------------------------------
+
+\section{Contributions}
+
+The specific contributions of this thesis are:
+
+\textbf{C1 --- Open-source reimplementation.} A complete Python reimplementation of MIGA from the paper specification, with reproducible experiments across five benchmark datasets (Iris, Wine, Glass, Haberman, Wholesale). Implementation decisions not specified in the paper --- generator types, covariance conditioning, stopping criteria --- are documented explicitly. This is the first public implementation of MIGA.
+
+\textbf{C2 --- Formal $F_r$--RMSE orthogonality theorem.} We prove that the RMSE-minimising imputation (conditional expectation) must have strictly positive $F_r$ whenever conditional variance is non-zero (Proposition~\ref{prop:rmse_implies_fr}), and that any $F_r$-zero imputation must have positive RMSE unless the missing values are drawn from the same distribution as the observed rows (Proposition~\ref{prop:fr_implies_rmse}). This establishes that no single imputation can jointly minimise both objectives, formalising the empirical decoupling observed across all experiments.
+
+\textbf{C3 --- First MNAR evaluation.} We extend MIGA's evaluation to three MNAR mechanisms (top-quantile, bottom-quantile, tails censoring) across five datasets. Under top-quantile MNAR on Haberman, MIGA simultaneously achieves its global minimum $F_r$ (0.810) and global maximum RMSE (0.384) --- the sharpest possible empirical confirmation of C2. Two-sided tails MNAR is substantially less damaging than one-sided mechanisms, a finding with practical implications for study design.
+
+\textbf{C4 --- Systematic $F_r$ vs RMSE comparison.} We compute both $F_r$ and RMSE for all four methods (Mean, KNN, MICE, MIGA) across all five datasets, validated over 10 independent seeds with Wilcoxon signed-rank tests. MIGA achieves 1.48--1.97$\times$ lower $F_r$ than MICE on Iris and Haberman ($p < 0.001$); MICE achieves 1.4--2.1$\times$ lower RMSE than MIGA on every dataset. A key secondary finding: on Glass ($p=10$), MICE achieves lower $F_r$ than MIGA, revealing that the $F_r$ advantage is not monotone in $p$ but depends jointly on dimensionality and inter-feature correlation.
+
+\textbf{C5 --- Synthetic $p \times \rho$ characterisation.} We design a controlled grid experiment on synthetic Gaussian data (Toeplitz covariance, $p \in \{4, 8, 13, 20, 30\}$, $\rho \in \{0, 0.3, 0.6, 0.9\}$) to isolate the effect of dimensionality and correlation on MIGA's $F_r$ advantage. The key finding: MIGA loses when high correlation ($\rho = 0.9$) coincides with moderate-or-higher dimensionality ($p \geq 8$), confirming that MICE's iterative regression becomes an effective joint distribution estimator under these conditions.
+
+\textbf{C6 --- IPW-$F_r$ for MNAR bias correction.} We implement Inverse Probability Weighted $F_r$ as an algorithmic correction for MNAR selection bias in $X_A$. A logistic regression propensity model re-weights $X_A$ rows to correct the biased reference distribution. Experiments across four datasets reveal a critical $n/p$ threshold: when $n/p \gtrsim 20$ with directional MNAR, IPW-$F_r$ reduces $F_r$ by 1--38\%; when $n/p \lesssim 14$, the propensity model overfits and increases $F_r$ by up to 35\%. The $F_r$--RMSE orthogonality established in C2 remains intact under IPW.
+
+\textbf{C7 --- Adaptive Diversity Injection (AD-MIGA).} The fixed 90\% diversity injection rate in MIGA wastes budget late in runs when the elite pool has stabilised. AD-MIGA replaces it with an exponential decay schedule $\alpha(g) = \exp(-\lambda g/G)$, $\lambda=2.0$, starting at full injection and shifting toward exploitation as the population matures. AD-MIGA-E achieves lower $F_r$ than standard MIGA on all 3 tested datasets (Iris, Haberman, Wholesale) and converges approximately 33 generations earlier on average (105 generations on Iris), while the $F_r$--RMSE orthogonality remains intact.
+
+\textbf{C8 --- Universal $F_r$--RMSE orthogonality via GAIN comparison.} The formal theorem (C2) is extended beyond MICE to neural methods. GAIN (Generative Adversarial Imputation Networks) mixes a reconstruction loss (pushing toward conditional means) with an adversarial objective (pushing toward distributional fidelity). We prove (Corollary~\ref{cor:gain_orthogonal}) that no finite $\alpha > 0$ allows GAIN to jointly achieve $F_r = 0$ and $\mathrm{RMSE} = 0$. An empirical $\alpha$-sweep ($\alpha \in \{0,1,10,100,1000,10000\}$, all 5 datasets, 5 seeds each) reveals three distinct failure regimes: monotone-but-off-frontier on Iris and Wine, training instability at high $\alpha$ on Haberman, and domination by MICE on both metrics on Glass. The impossibility holds universally across all reconstruction weights and all datasets, elevating C2 to a \emph{universal impossibility theorem} for imputation.
+
+\textbf{C9 --- Parallel execution of independent GA runs.} The $Q$ independent runs of MIGA share no state and are trivially parallelisable. We implement \texttt{n\_jobs} via \texttt{concurrent.futures.ProcessPoolExecutor} with \texttt{numpy.random.SeedSequence}-spawned seeds, preserving exact reproducibility regardless of parallelism level. Benchmarks across all 5 datasets confirm near-linear scaling: 1.94--1.98$\times$ speedup at Q=2. At Q=6, per-seed wall-clock time falls from $\sim$200 seconds to $\sim$35 seconds with no change to algorithm behaviour.
+
+%----------------------------------------------------------------------------------------
+
+\section{Thesis Organisation}
+
+The remainder of this thesis is organised as follows. Chapter~\ref{Chapter2} reviews missing data mechanisms, classical and modern imputation methods, genetic algorithms, and formally proves the $F_r$--RMSE orthogonality (Section~\ref{sec:orthogonality}), including its extension to neural methods via Corollary~\ref{cor:gain_orthogonal}. Chapter~\ref{Chapter3} describes the full MIGA implementation, documents every ambiguous design decision, and presents the IPW-$F_r$ extension (Section~\ref{sec:ipw_implementation}), the AD-MIGA adaptive diversity schedule (Section~\ref{sec:ad_miga_impl}), and the synthetic dimension methodology (Section~\ref{sec:synthetic_dim_methods}). Chapter~\ref{Chapter4} reports all experimental results: replication, MNAR evaluation, IPW-$F_r$ comparison, baseline comparison with significance tests, variance preservation, downstream evaluation, the synthetic $p \times \rho$ experiment, AD-MIGA (Section~\ref{sec:ad_miga_full}), and the GAIN comparison with $\alpha$-sweep (Sections~\ref{sec:gain_results}--\ref{sec:gain_alpha_sweep}). Chapter~\ref{Chapter5} discusses the orthogonality findings, scope conditions, limitations, and all implemented future work.

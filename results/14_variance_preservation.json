@@ -1,0 +1,211 @@
+{
+  "Iris": {
+    "n": 150,
+    "p": 4,
+    "pct": 30,
+    "cols": [
+      "sepal length (cm)",
+      "sepal width (cm)",
+      "petal length (cm)",
+      "petal width (cm)"
+    ],
+    "miss_cols": [
+      "sepal length (cm)",
+      "petal width (cm)"
+    ],
+    "true_var": {
+      "sepal length (cm)": 0.6856935123042507,
+      "petal width (cm)": 0.5810062639821029
+    },
+    "Mean": {
+      "ratios": {
+        "sepal length (cm)": 0.67560398688439,
+        "petal width (cm)": 0.7266682163817352
+      },
+      "mean_ratio": 0.7011361016330626
+    },
+    "KNN": {
+      "ratios": {
+        "sepal length (cm)": 0.9475619908321234,
+        "petal width (cm)": 1.0014343394049823
+      },
+      "mean_ratio": 0.9744981651185529
+    },
+    "MICE": {
+      "ratios": {
+        "sepal length (cm)": 0.9691278939543789,
+        "petal width (cm)": 0.9834242943366007
+      },
+      "mean_ratio": 0.9762760941454898
+    },
+    "MIGA": {
+      "ratios": {
+        "sepal length (cm)": 1.0183820818583709,
+        "petal width (cm)": 1.0323830675623331
+      },
+      "mean_ratio": 1.025382574710352
+    }
+  },
+  "Glass": {
+    "n": 214,
+    "p": 10,
+    "pct": 30,
+    "cols": [
+      "RI",
+      "Na",
+      "Mg",
+      "Al",
+      "Si",
+      "K",
+      "Ca",
+      "Ba",
+      "Fe",
+      "Type"
+    ],
+    "miss_cols": [
+      "RI",
+      "Na",
+      "Al",
+      "Ca"
+    ],
+    "true_var": {
+      "RI": 9.222541371594076e-06,
+      "Na": 0.6668413672063533,
+      "Al": 0.24927017901803336,
+      "Ca": 2.0253658483611954
+    },
+    "Mean": {
+      "ratios": {
+        "RI": 0.6533501985543569,
+        "Na": 0.7180948085895827,
+        "Al": 0.6300801214258938,
+        "Ca": 0.5849673216517394
+      },
+      "mean_ratio": 0.6466231125553932
+    },
+    "KNN": {
+      "ratios": {
+        "RI": 0.8078619049367906,
+        "Na": 0.8657552547635669,
+        "Al": 0.836222619720368,
+        "Ca": 0.7486493113777156
+      },
+      "mean_ratio": 0.8146222726996103
+    },
+    "MICE": {
+      "ratios": {
+        "RI": 0.9288931280223904,
+        "Na": 0.9608764637976039,
+        "Al": 0.9991110258123337,
+        "Ca": 0.8593221583812047
+      },
+      "mean_ratio": 0.9370506940033831
+    },
+    "MIGA": {
+      "ratios": {
+        "RI": 1.2420934208827632,
+        "Na": 0.9854471102925931,
+        "Al": 0.9985410174600097,
+        "Ca": 0.7928400339998734
+      },
+      "mean_ratio": 1.0047303956588098
+    }
+  },
+  "Haberman": {
+    "n": 306,
+    "p": 3,
+    "pct": 30,
+    "cols": [
+      "Age",
+      "OpYear",
+      "Nodes"
+    ],
+    "miss_cols": [
+      "Age"
+    ],
+    "true_var": {
+      "Age": 116.71458266366656
+    },
+    "Mean": {
+      "ratios": {
+        "Age": 0.7107178856273002
+      },
+      "mean_ratio": 0.7107178856273002
+    },
+    "KNN": {
+      "ratios": {
+        "Age": 0.7951377824160385
+      },
+      "mean_ratio": 0.7951377824160385
+    },
+    "MICE": {
+      "ratios": {
+        "Age": 0.716943727065586
+      },
+      "mean_ratio": 0.716943727065586
+    },
+    "MIGA": {
+      "ratios": {
+        "Age": 1.534623333283148
+      },
+      "mean_ratio": 1.534623333283148
+    }
+  },
+  "Wholesale": {
+    "n": 440,
+    "p": 8,
+    "pct": 30,
+    "cols": [
+      "Channel",
+      "Region",
+      "Fresh",
+      "Milk",
+      "Grocery",
+      "Frozen",
+      "Detergents_Paper",
+      "Delicassen"
+    ],
+    "miss_cols": [
+      "Fresh",
+      "Milk",
+      "Detergents_Paper"
+    ],
+    "true_var": {
+      "Fresh": 159954927.42140713,
+      "Milk": 54469967.23892627,
+      "Detergents_Paper": 22732436.036399875
+    },
+    "Mean": {
+      "ratios": {
+        "Fresh": 0.526740799196791,
+        "Milk": 0.7129299289593245,
+        "Detergents_Paper": 0.6777413731689806
+      },
+      "mean_ratio": 0.6391373671083653
+    },
+    "KNN": {
+      "ratios": {
+        "Fresh": 0.5668693455333896,
+        "Milk": 0.8928662293477769,
+        "Detergents_Paper": 0.9375478844159008
+      },
+      "mean_ratio": 0.7990944864323558
+    },
+    "MICE": {
+      "ratios": {
+        "Fresh": 0.6767338737992833,
+        "Milk": 0.9947183337744707,
+        "Detergents_Paper": 0.9602440220169769
+      },
+      "mean_ratio": 0.8772320765302437
+    },
+    "MIGA": {
+      "ratios": {
+        "Fresh": 0.845827313246725,
+        "Milk": 1.424987136867962,
+        "Detergents_Paper": 0.9599181688825692
+      },
+      "mean_ratio": 1.0769108729990855
+    }
+  }
+}

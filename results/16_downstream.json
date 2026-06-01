@@ -1,0 +1,494 @@
+{
+  "per_seed": {
+    "Iris": {
+      "0": {
+        "Mean": {
+          "accuracy": 0.8400000000000001,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "KNN": {
+          "accuracy": 0.8800000000000001,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        },
+        "MICE": {
+          "accuracy": 0.8866666666666667,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        },
+        "MIGA": {
+          "accuracy": 0.8800000000000001,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        }
+      },
+      "1": {
+        "Mean": {
+          "accuracy": 0.9,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "KNN": {
+          "accuracy": 0.8933333333333333,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        },
+        "MICE": {
+          "accuracy": 0.8866666666666667,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        },
+        "MIGA": {
+          "accuracy": 0.8866666666666667,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        }
+      },
+      "2": {
+        "Mean": {
+          "accuracy": 0.8800000000000001,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "KNN": {
+          "accuracy": 0.8800000000000001,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        },
+        "MICE": {
+          "accuracy": 0.8866666666666667,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        },
+        "MIGA": {
+          "accuracy": 0.8866666666666667,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        }
+      },
+      "3": {
+        "Mean": {
+          "accuracy": 0.9,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "KNN": {
+          "accuracy": 0.8933333333333333,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        },
+        "MICE": {
+          "accuracy": 0.8866666666666667,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        },
+        "MIGA": {
+          "accuracy": 0.8933333333333333,
+          "ks_pass": 1.0,
+          "ci_coverage": 0.0
+        }
+      },
+      "4": {
+        "Mean": {
+          "accuracy": 0.8866666666666667,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "KNN": {
+          "accuracy": 0.8800000000000001,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        },
+        "MICE": {
+          "accuracy": 0.8800000000000001,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        },
+        "MIGA": {
+          "accuracy": 0.8866666666666667,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        }
+      },
+      "5": {
+        "Mean": {
+          "accuracy": 0.9,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "KNN": {
+          "accuracy": 0.8866666666666667,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        },
+        "MICE": {
+          "accuracy": 0.8866666666666667,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        },
+        "MIGA": {
+          "accuracy": 0.8866666666666667,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        }
+      },
+      "6": {
+        "Mean": {
+          "accuracy": 0.9,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "KNN": {
+          "accuracy": 0.8866666666666667,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        },
+        "MICE": {
+          "accuracy": 0.8866666666666667,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        },
+        "MIGA": {
+          "accuracy": 0.8866666666666667,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        }
+      },
+      "7": {
+        "Mean": {
+          "accuracy": 0.8866666666666667,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "KNN": {
+          "accuracy": 0.8933333333333333,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        },
+        "MICE": {
+          "accuracy": 0.8933333333333333,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        },
+        "MIGA": {
+          "accuracy": 0.8933333333333333,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        }
+      },
+      "8": {
+        "Mean": {
+          "accuracy": 0.9,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "KNN": {
+          "accuracy": 0.9,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        },
+        "MICE": {
+          "accuracy": 0.8933333333333333,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        },
+        "MIGA": {
+          "accuracy": 0.8866666666666667,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        }
+      },
+      "9": {
+        "Mean": {
+          "accuracy": 0.8866666666666667,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "KNN": {
+          "accuracy": 0.8866666666666667,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        },
+        "MICE": {
+          "accuracy": 0.8933333333333333,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        },
+        "MIGA": {
+          "accuracy": 0.9,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        }
+      }
+    },
+    "Haberman": {
+      "0": {
+        "Mean": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "KNN": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 1.0
+        },
+        "MICE": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "MIGA": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 1.0,
+          "ci_coverage": 0.0
+        }
+      },
+      "1": {
+        "Mean": {
+          "accuracy": 0.43791644632469595,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "KNN": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "MICE": {
+          "accuracy": 0.43791644632469595,
+          "ks_pass": 0.0,
+          "ci_coverage": 1.0
+        },
+        "MIGA": {
+          "accuracy": 0.4411951348492861,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        }
+      },
+      "2": {
+        "Mean": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "KNN": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "MICE": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "MIGA": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        }
+      },
+      "3": {
+        "Mean": {
+          "accuracy": 0.4380222104706505,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "KNN": {
+          "accuracy": 0.4380222104706505,
+          "ks_pass": 0.0,
+          "ci_coverage": 1.0
+        },
+        "MICE": {
+          "accuracy": 0.4380222104706505,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "MIGA": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 1.0
+        }
+      },
+      "4": {
+        "Mean": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "KNN": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "MICE": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "MIGA": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        }
+      },
+      "5": {
+        "Mean": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "KNN": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "MICE": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "MIGA": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        }
+      },
+      "6": {
+        "Mean": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "KNN": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 1.0
+        },
+        "MICE": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "MIGA": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        }
+      },
+      "7": {
+        "Mean": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "KNN": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "MICE": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "MIGA": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        }
+      },
+      "8": {
+        "Mean": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "KNN": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "MICE": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "MIGA": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        }
+      },
+      "9": {
+        "Mean": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "KNN": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 1.0
+        },
+        "MICE": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 0.0,
+          "ci_coverage": 0.0
+        },
+        "MIGA": {
+          "accuracy": 0.44447382337387625,
+          "ks_pass": 1.0,
+          "ci_coverage": 1.0
+        }
+      }
+    }
+  },
+  "summary": {
+    "Iris": {
+      "Mean": {
+        "accuracy": 0.8880000000000001,
+        "ks_pass": 0.0,
+        "ci_coverage": 0.0
+      },
+      "KNN": {
+        "accuracy": 0.8880000000000001,
+        "ks_pass": 1.0,
+        "ci_coverage": 1.0
+      },
+      "MICE": {
+        "accuracy": 0.8880000000000001,
+        "ks_pass": 1.0,
+        "ci_coverage": 1.0
+      },
+      "MIGA": {
+        "accuracy": 0.8886666666666667,
+        "ks_pass": 1.0,
+        "ci_coverage": 0.9
+      }
+    },
+    "Haberman": {
+      "Mean": {
+        "accuracy": 0.44317292437863565,
+        "ks_pass": 0.0,
+        "ci_coverage": 0.0
+      },
+      "KNN": {
+        "accuracy": 0.44382866208355365,
+        "ks_pass": 0.0,
+        "ci_coverage": 0.4
+      },
+      "MICE": {
+        "accuracy": 0.44317292437863565,
+        "ks_pass": 0.0,
+        "ci_coverage": 0.1
+      },
+      "MIGA": {
+        "accuracy": 0.44414595452141714,
+        "ks_pass": 0.9,
+        "ci_coverage": 0.9
+      }
+    }
+  }
+}

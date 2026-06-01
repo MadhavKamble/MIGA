@@ -1,0 +1,177 @@
+% Chapter 2 — Background (condensed)
+
+\chapter{Background}
+\label{Chapter2}
+
+\section{Missing Data Mechanisms}
+
+Rubin (1976) established the canonical taxonomy of three missingness mechanisms \cite{Rubin1976}.
+
+\textbf{MCAR (Missing Completely At Random).} The probability of missingness is independent of both observed and missing data: $P(R \mid X) = P(R)$. Complete-case analysis is unbiased under MCAR.
+
+\textbf{MAR (Missing At Random).} Missingness may depend on observed data but not on the missing values themselves: $P(R \mid X) = P(R \mid X_{\text{obs}})$. The mechanism is ignorable; valid imputation can proceed from observed data alone. MICE and MIGA assume MAR.
+
+\textbf{MNAR (Missing Not At Random).} Missingness depends on the missing value itself: $P(R \mid X) \neq P(R \mid X_{\text{obs}})$. MNAR is non-ignorable; any method ignoring the mechanism produces biased results. Chapter~\ref{Chapter4} provides the first characterisation of MIGA's failure under MNAR.
+
+\section{Imputation Methods}
+
+\subsection{Complete-Case Analysis and Single Imputation}
+
+Listwise deletion discards any row with at least one missing value. Under MCAR this is unbiased but loses power; under MAR or MNAR it introduces selection bias. Single imputation (column mean) is computationally trivial but compresses variance: replacing 30\% of a column with its mean reduces variance by approximately $(1-0.3)^2 \approx 0.49$.
+
+KNN imputation \cite{Troyanskaya2001} replaces missing values with a weighted average of the $k$ nearest complete observations. It preserves local structure better than mean imputation but does not account for imputation uncertainty \cite{Rubin1987}.
+
+\subsection{MICE}
+
+MICE \cite{vanBuuren2011} iterates a cycle of $p$ conditional regressions: for each variable $j$, fit a model on all other variables $X_{-j}$, then draw from the posterior predictive distribution. MICE is valid under MAR and flexible (each variable can use a different model family).
+
+However, MICE's criterion is minimum expected squared error, which corresponds to imputing conditional means. By the law of total variance:
+\begin{equation}
+    \text{Var}(X_j) = \underbrace{\mathbb{E}[\text{Var}(X_j \mid X_{-j})]}_{\text{within-group}} + \underbrace{\text{Var}(\mathbb{E}[X_j \mid X_{-j}])}_{\text{between-group}}
+\end{equation}
+MICE discards the first term, so the imputed marginal variance is systematically lower than the truth. Van Buuren (2018, \S2.6) states: ``the minimum mean squared error is achieved by regression imputation, which suppresses variance and produces biased statistical inference'' \cite{vanBuuren2018}. This is the fundamental motivation for a distributional approach.
+
+\section{The \texorpdfstring{$F_r$}{Fr}--RMSE Orthogonality Theorem}
+\label{sec:orthogonality}
+
+The central theoretical result of this thesis is that distributional fidelity ($F_r$) and pointwise accuracy (RMSE) are structurally orthogonal objectives.
+
+\begin{proposition}[RMSE-optimal imputation has positive $F_r$]
+\label{prop:rmse_implies_fr}
+Let $\hat{X}_C^{*} = \arg\min_{\hat{X}}\,\mathbb{E}[\mathrm{RMSE}(\hat{X}, X_C)]$ be the RMSE-minimising imputation. If $\mathrm{Var}(X_j \mid X_{-j}) > 0$ for any feature $j$ with missing values, then $F_r(\hat{X}_C^{*}) > 0$.
+\end{proposition}
+
+\begin{proof}
+The RMSE-minimising imputation sets each missing value to $\hat{X}_{ij}^{*} = \mathbb{E}[X_{ij} \mid X_{i,\text{obs}}]$. By the law of total variance, the imputed column retains only the between-group variance:
+\[
+  \mathrm{Var}(\hat{X}_j^{*}) = \mathrm{Var}(\mathbb{E}[X_j \mid X_{-j}]) < \mathrm{Var}(X_j)
+\]
+since the within-group term is strictly positive by assumption. Therefore the relative covariance $\tilde{S} = S_A^{-1/2} S_C S_A^{-1/2}$ deviates from the identity, giving $D_r(\tilde{S}, I) > 0$, and since $F_r \geq D_r(\tilde{S}, I)$, we have $F_r(\hat{X}_C^{*}) > 0$.
+\end{proof}
+
+\begin{proposition}[$F_r$-zero imputation has positive RMSE]
+\label{prop:fr_implies_rmse}
+Let $\hat{X}_C^{**}$ satisfy $F_r(\hat{X}_C^{**}) = 0$. Then $\mathbb{E}[\mathrm{RMSE}(\hat{X}_C^{**}, X_C)] > 0$ unless the true missing values are drawn from the same distribution as $X_A$.
+\end{proposition}
+
+\begin{proof}
+$F_r = 0$ constrains the \emph{marginal distribution} of $\hat{X}_C^{**}$ to match $X_A$. RMSE = 0 requires each $\hat{X}_{ij}^{**} = X_{ij}$ --- a constraint on the \emph{joint distribution} of imputed and true values. A method can satisfy $F_r = 0$ by sampling from $X_A$'s empirical distribution independently of the true values, yielding $\text{RMSE} > 0$. The two conditions are simultaneously satisfiable only when the true missing values are drawn from exactly the same distribution as $X_A$.
+\end{proof}
+
+\begin{corollary}[Objectives are non-collinear]
+\label{cor:orthogonal}
+No imputation method can simultaneously minimise $\mathbb{E}[\mathrm{RMSE}]$ and $F_r$ in general. Methods minimising RMSE (e.g.\ MICE) will generically have $F_r > 0$; methods minimising $F_r$ (e.g.\ MIGA) will generically have RMSE above the irreducible minimum.
+\end{corollary}
+
+\begin{remark}
+Orthogonality does not imply that $F_r$ and RMSE are uncorrelated \emph{across methods}. In practice, both metrics tend to improve together as a method improves over, say, mean imputation. The corollary's claim is narrower: for any fixed dataset and missingness pattern, no single imputed matrix can simultaneously achieve the minimum of each objective. Optimising one therefore forces a positive value on the other.
+\end{remark}
+
+The practical consequence: the choice between MIGA and MICE is not a question of which method is universally better, but which objective is appropriate for the downstream application. When the analysis requires the correct marginal distribution, $F_r$ is the criterion and MIGA is preferred. When it requires accurate individual cell reconstruction, RMSE is the criterion and MICE is preferred.
+
+\subsection{Extension to Neural Methods (C8)}
+\label{sec:gain_theory}
+
+Propositions~\ref{prop:rmse_implies_fr}--\ref{prop:fr_implies_rmse} apply to any method that minimises RMSE or achieves $F_r=0$. We now examine how GAIN \cite{Yoon2018} relates to this framework.
+
+\textbf{GAIN's loss.} GAIN trains a generator $G$ with:
+\begin{equation}
+    \mathcal{L}_G = \underbrace{\mathbb{E}[(1-M)\cdot\log D(\hat{X}, H)]}_{\text{adversarial}} + \alpha\underbrace{\mathbb{E}[M \cdot \|X - G(\tilde{X}, M)\|^2]}_{\text{MSE on observed}}
+\end{equation}
+where $\alpha > 0$ weights MSE reconstruction of observed values, and $H$ is a hint matrix.
+
+\begin{corollary}[GAIN cannot achieve $F_r = 0$ and $\mathrm{RMSE} = 0$ simultaneously]
+\label{cor:gain_orthogonal}
+For any $\alpha > 0$, GAIN's MSE component biases the generator toward conditional means, so $F_r > 0$ by the same law-of-total-variance argument as Proposition~\ref{prop:rmse_implies_fr}. Simultaneously, the adversarial component prevents $G$ from being a pure conditional-mean estimator, so RMSE $> 0$. GAIN therefore cannot jointly achieve $F_r = 0$ and $\mathrm{RMSE} = 0$.
+\end{corollary}
+
+\begin{remark}
+Corollary~\ref{cor:gain_orthogonal} does \emph{not} claim that GAIN lies on the $F_r$--RMSE Pareto frontier between MIGA and MICE. At $\alpha = 100$ (the paper's default), experiments (Section~\ref{sec:gain_results}) show GAIN is \emph{dominated} by MICE on Iris: higher $F_r$ (1.478 vs 1.271) \emph{and} higher RMSE (0.124 vs 0.101). The adversarial component adds variance without directing it toward the correct distribution, resulting in off-frontier performance. The corollary's claim is solely the impossibility: no $\alpha > 0$ allows GAIN to achieve both objectives simultaneously.
+\end{remark}
+
+This extends the orthogonality result from the MIGA/MICE pair to any method mixing reconstruction and distributional objectives, establishing C2 as a \emph{universal} impossibility theorem across imputation families.
+
+\section{Genetic Algorithms}
+
+\subsection{Foundations}
+
+A Genetic Algorithm (GA) is a population-based metaheuristic search method inspired by Darwinian natural selection \cite{Holland1975}. A GA maintains a population of candidate solutions, evaluates each candidate using a fitness function, and iteratively produces better solutions by applying selection, crossover, and mutation operators.
+
+The canonical GA operates as follows \cite{Goldberg1989}:
+
+\begin{enumerate}
+    \item \textbf{Initialisation:} Generate an initial population of $l$ individuals, typically at random.
+    \item \textbf{Evaluation:} Compute the fitness $f(x)$ for each individual $x$.
+    \item \textbf{Selection:} Select individuals for reproduction with probability proportional to fitness.
+    \item \textbf{Crossover:} With probability $p_c$, combine pairs of selected individuals to produce offspring.
+    \item \textbf{Mutation:} With probability $p_m$, randomly alter components of offspring.
+    \item \textbf{Replacement:} Form the new population from survivors and offspring.
+    \item \textbf{Repeat} steps 2--6 for $G$ generations or until convergence.
+\end{enumerate}
+
+GAs are particularly suited to problems where the fitness landscape is discontinuous, multimodal, or not differentiable --- properties that make gradient-based methods inapplicable.
+
+\subsection{MIGA's Genetic Algorithm}
+
+MIGA \cite{FigueroaGarcia2023} uses a custom GA that departs from the canonical scheme. Each individual in the population represents one complete candidate imputation: a vector of values for all missing cells in the dataset. The fitness function $F_r$ measures distributional distance between $X_A$ and the completed $X_C$.
+
+MIGA's most distinctive design choice is aggressive diversity injection: at each generation, approximately 90\% of the population is replaced with randomly generated individuals drawn from per-variable bootstrap generators. This effectively restarts the search from random each generation, preserving only the best $c$ elite individuals. MIGA runs $Q$ independent times and returns the best imputation across all runs.
+
+\subsection{Exploration-Exploitation in MIGA}
+
+The population update is parameterised as: $c$ elite individuals carried unchanged; $c_1 \times c_3$ mutated copies of elites; $c_2$ crossover offspring from pairs of elites; and the remainder ($\approx$90\%) fresh random individuals from per-variable generators (diversity injection). Under default parameters ($l=200$, $c=3$, $c_1=3$, $c_2=2$, $c_3=5$), diversity injection fills 180/200 = 90\% of the population. This makes MIGA closer to a repeated random restart with elite preservation than a conventional GA, with diversity injection (not mutation) as the dominant exploration operator.
+
+\section{The MIGA Paper}
+
+Figueroa-Garc\'ia, Neruda, and Hernandez-P\'erez (2023) published MIGA in ``A genetic algorithm for multivariate missing data imputation,'' \textit{Information Sciences} (619, 947--967) \cite{FigueroaGarcia2023}.
+
+\subsection{Problem Formulation}
+
+Given a dataset $X$ with $n$ rows and $p$ features, MIGA partitions it into $X_A$ (the $n_A$ rows with no missing values) and $X_C$ (the $n_C = n - n_A$ rows with at least one missing value). The goal is to find imputed values for the missing cells of $X_C$ such that the statistical properties of the completed $X_C$ match those of $X_A$. This is fundamentally different from minimising reconstruction error: the question is not whether individual imputed values are close to the truth, but whether the completed dataset is statistically indistinguishable from the observed data.
+
+\subsection{The Fitness Function $F_r$}
+
+The fitness function quantifies distributional distance using three terms:
+
+\begin{equation}
+    F_r = D_r(\tilde{x}_A,\, \tilde{x}_C) + D_r(\tilde{S},\, I) + D_r(b_A,\, b_C)
+    \label{eq:fr_full}
+\end{equation}
+
+where $D_r$ denotes the Minkowski distance of order $r$ (with $r = \infty$, the Chebyshev norm: $D_\infty(A,B) = \max_{i,j}|a_{ij} - b_{ij}|$), and:
+\begin{itemize}
+    \item $\tilde{x} = \bar{x}/S_p$ is the pooled-standardised mean vector
+    \item $\tilde{S} = S_A^{-1/2} S_C S_A^{-1/2}$ is the relative covariance matrix ($\tilde{S} = I$ when $S_C = S_A$)
+    \item $b$ is the bias-corrected skewness vector
+\end{itemize}
+
+$F_r = 0$ if and only if $X_C$ matches $X_A$ in mean, covariance, and skewness. The Chebyshev norm ensures that even a single badly matched feature dimension contributes strongly to $F_r$, preventing the GA from sacrificing one feature to improve others.
+
+\subsection{Per-Variable Generators}
+
+Each variable $j$ has a random generator $R_j$ used to sample candidate values during initialisation and diversity injection. The paper specifies that generators are ``obtained from samples'' of the observed values --- this thesis interprets this as bootstrap resampling from the empirical distribution, which correctly preserves discrete marginals. For example, Haberman's Nodes column has 44\% zeros: a Gaussian generator would never sample a zero, while bootstrap sampling produces zeros with probability 0.44.
+
+\subsection{Gaps in the Original Paper}
+
+Three gaps motivate this thesis:
+\begin{enumerate}
+    \item \textbf{No public implementation.} The paper contains no source code; several implementation decisions are underspecified.
+    \item \textbf{Weak baseline comparison.} Comparisons against CMIM (2005) and ANNI miss the modern gold-standard MICE.
+    \item \textbf{No MNAR evaluation.} All experiments assume MAR. MIGA's fitness function behaviour under non-ignorable missingness is unknown.
+\end{enumerate}
+
+\section{Related Work}
+
+\subsection{Distributional Imputation}
+
+The observation that RMSE-optimal imputation suppresses variance has motivated several lines of work. Siddique and Belin (2008) proposed predictive mean matching, which preserves distributional properties by imputing observed values rather than model predictions \cite{SiddiqueeBelin2008}. Van Buuren (2018, \S3.4) discusses ``proper imputation'' --- drawing from the full posterior predictive distribution rather than its mean --- as a principled way to avoid variance suppression \cite{vanBuuren2018}. MIGA can be understood as a non-parametric alternative to proper imputation.
+
+Muzellec et al.\ (2020) proposed optimal transport-based imputation, which finds imputed values minimising the Sinkhorn divergence between the completed and observed distributions \cite{Muzellec2020} --- directly analogous to MIGA's $F_r$ objective but using a differentiable surrogate. They independently report that distributional methods achieve higher RMSE than regression-based methods, consistent with the $F_r$--RMSE orthogonality theorem (Section~\ref{sec:orthogonality}).
+
+\subsection{Neural Network Imputation}
+
+GAIN \cite{Yoon2018} uses a Generative Adversarial Network to generate imputations, with a discriminator that learns to distinguish imputed from observed values --- conceptually related to MIGA's distributional objective. GRAPE \cite{You2020} formulates imputation as a graph completion problem using message passing over a bipartite graph of observations and features. Both methods are trained primarily under reconstruction loss (MSE), making them conditional-mean estimators by Proposition~\ref{prop:rmse_implies_fr}. A comparison against GAIN and GRAPE is identified as future work, with the prediction that they will also fail distributional fidelity tests for the same structural reason.
+
+\subsection{Evaluation of Imputation Methods}
+
+Oberman and Vink (2024) survey evaluation practices for imputation and find no universal standard for RMSE normalisation, making cross-paper comparisons unreliable \cite{ObermanVink2024}. This thesis uses range-normalised RMSE to match the original paper's reported values. Ipsen et al.\ (2022) show that evaluating imputation quality under MNAR using RMSE on the missing cells is itself biased, because the missing cells are a non-representative sample of the marginal distribution \cite{Ipsen2022} --- a point directly relevant to Chapter~\ref{Chapter4}'s MNAR analysis.

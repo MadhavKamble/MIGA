@@ -1,0 +1,101 @@
+% Chapter 5 — Discussion (condensed)
+
+\chapter{Discussion}
+\label{Chapter5}
+
+\section{The Central Finding}
+
+The most important result of this thesis is that distributional distance ($F_r$) and pointwise accuracy (RMSE) are structurally orthogonal objectives. They do not measure the same underlying quality; optimising one does not optimise the other.
+
+Three lines of evidence establish this. First, under MAR: MIGA achieves significantly lower $F_r$ than MICE on Iris (1.48$\times$, $p=0.001$) and Haberman (1.97$\times$, $p=0.001$), while MICE achieves lower RMSE than MIGA on every dataset (1.4--2.1$\times$). Neither dominates; each wins decisively on its own metric.
+
+Second, the MNAR inversion: on Haberman \texttt{top}, MIGA achieves $F_r = 0.810$ (global minimum) with RMSE = 0.384 (global maximum), and the GA converges to this wrong answer with $\sigma = 0.000005$ across 10 seeds. A method cannot achieve a lower $F_r$ without worsening RMSE more severely.
+
+Third, the formal proof: Propositions~\ref{prop:rmse_implies_fr} and~\ref{prop:fr_implies_rmse} establish that no single imputation can jointly minimise both objectives. The experiments confirm every prediction of the theorem.
+
+Fourth, universality via the GAIN $\alpha$-sweep (C8): Corollary~\ref{cor:gain_orthogonal} proves that GAIN --- which mixes reconstruction and adversarial objectives --- also cannot jointly achieve $F_r=0$ and RMSE$=0$. The empirical $\alpha$-sweep across $\alpha \in \{0, 1, 10, 100, 1000, 10000\}$ on all 5 datasets confirms this: the GAIN arc lies strictly off the MIGA--MICE Pareto frontier at every $\alpha$. On Haberman, high $\alpha$ causes instability; on Glass, every $\alpha$ is dominated by MICE on both metrics. The impossibility holds universally.
+
+\section{When MIGA is the Right Choice}
+\label{sec:scope_conditions}
+
+MIGA is appropriate when the downstream analysis requires the correct marginal or joint distribution, not just accurate individual cell values.
+
+\textbf{Confidence intervals and hypothesis tests.} MICE's systematic variance suppression (ratios 0.717--0.976 across datasets) biases within-imputation variance downward, producing overconfident intervals. The downstream evaluation confirms this: MICE's bootstrap 95\% CIs contain the true mean only 10\% of the time on Haberman, versus MIGA's 70\%.
+
+\textbf{Distributional testing.} MICE fails the KS test 100\% of the time on Haberman (by Proposition~\ref{prop:rmse_implies_fr}, this is structurally guaranteed, not dataset-specific). MIGA passes 40\% of the time.
+
+\textbf{Discrete or heavy-tailed features.} MIGA implicitly preserves kurtosis without an explicit kurtosis term: on Haberman, kurtosis distance 1.854 versus MICE's 7.783 (4.2$\times$ better). Matching moments 1--3 incidentally improves moment 4.
+
+\textbf{No cost to predictive accuracy.} All four methods achieve essentially identical classification accuracy ($\approx 0.744$) on Haberman. Choosing MIGA over MICE for distributional tasks is not a trade-off.
+
+MIGA's advantage is reliable when the dataset satisfies two scope conditions: (1) moderate baseline $F_r$ gap --- the distributional distance between $X_A$ and $X_C$ under MAR must be tractable for the GA to close, requiring low-to-moderate dimensionality ($p \lesssim 8$) and low-to-moderate correlation ($\rho \leq 0.6$); and (2) non-degenerate feature variances (no near-zero variance features that inflate the covariance term numerically through $S_A^{-1/2}$). On Glass, the Refractive Index feature ($\sigma^2 \approx 0.00003$) causes seed-to-seed $F_r$ range of 1.6--20.9, making reliable convergence impossible.
+
+\section{When MICE is the Right Choice}
+
+MICE is appropriate when minimum pointwise error is required or when the dataset falls outside MIGA's scope.
+
+\textbf{Predictive modelling.} MICE's 1.4--2.1$\times$ lower RMSE translates directly to better feature quality for downstream regression and classification models.
+
+\textbf{High-dimensional correlated data.} When $p \geq 13$ or $\rho \geq 0.9$, MICE's iterative conditional regression becomes an effective implicit joint distribution estimator. MICE wins both RMSE and $F_r$ on Glass ($p=10$, highly correlated features).
+
+\textbf{Compute constraints.} MIGA requires $\sim$180--210 seconds per seed; MICE runs in under one second. The $Q$ independent runs are embarrassingly parallel ($Q$-fold speedup with no algorithm change), reducing wall-clock time to $\sim$40 seconds, but the per-core cost remains. For large datasets or production pipelines, MICE is more practical.
+
+\section{Relationship to Prior Work}
+
+\subsection{MIGA vs the Original Paper}
+
+Figueroa-Garc\'ia et al.\ (2023) compare MIGA against CMIM and ANNI, both substantially weaker than modern baselines \cite{FigueroaGarcia2023}. Our comparison against MICE and KNN provides the first evaluation of MIGA against current methods. The $F_r$ advantage of MIGA over MICE is confirmed with statistical significance on three of four tested datasets; the RMSE disadvantage is confirmed on all five. The MNAR experiments provide the first characterisation of MIGA's behaviour under non-ignorable missingness, revealing the $F_r \to$ RMSE inversion as a fundamental consequence of the distributional objective under directional selection bias.
+
+\subsection{Relationship to Optimal Transport Imputation}
+
+Muzellec et al.\ (2020) propose imputation via the Sinkhorn divergence \cite{Muzellec2020}. This is conceptually analogous to MIGA's $F_r$ objective: both minimise a measure of distributional discrepancy between the imputed and observed data. Muzellec et al.\ also report that distributional methods achieve higher RMSE than regression-based methods --- an independent empirical confirmation of the $F_r$--RMSE orthogonality theorem. The key algorithmic difference: Sinkhorn divergence is differentiable and enables gradient-based optimisation, but requires $O(n^2 \log n)$ per evaluation; $F_r$ is non-differentiable but evaluable in $O(np^2)$, making it tractable as a GA fitness function over hundreds of thousands of evaluations.
+
+\subsection{Relationship to Proper Multiple Imputation}
+
+Van Buuren (2018, \S3.4) defines ``proper'' imputation as drawing from the full posterior predictive distribution $P(X_{\text{mis}} \mid X_{\text{obs}})$ rather than its conditional mean \cite{vanBuuren2018}. Proper imputation preserves marginal variance by construction. MIGA can be understood as a non-parametric approximation to proper imputation: rather than drawing from a parametric posterior, it uses a GA to find imputations that match distributional moments. MIGA's variance ratios close to 1.0 on Glass (1.005) and Wholesale (1.077) are consistent with the variance-preservation property of proper imputation, and contrast sharply with MICE's systematic under-imputation (ratios 0.717--0.976).
+
+\section{Limitations}
+
+\textbf{MNAR failure mode.} MIGA's fitness function cannot detect that $X_A$ is a biased sample under directional MNAR. The $F_r \to$ RMSE inversion is the most extreme manifestation. IPW-$F_r$ partially corrects this when $n/p \geq 20$, but cannot recover information about values that are entirely absent from the complete-case set.
+
+\textbf{Dimension and correlation interaction.} MIGA fails on Glass ($p=10$) not because $p$ exceeds a threshold in isolation, but because Glass's high inter-feature correlation activates MICE's regression advantage. The $(p, \rho)$ interaction means no simple dimension cutoff applies.
+
+\textbf{Hard dimension limit.} Any dataset with $p \gtrsim 25$ at 30\% MCAR has essentially no complete rows ($n \cdot 0.7^{25} \approx 0.2$ for $n=200$). MIGA cannot operate without a non-trivial $X_A$. This is a fundamental constraint of the distributional reference approach.
+
+\textbf{Single-feature degenerate case.} With only one feature made missing (Haberman, $p=3$), the multivariate covariance term carries little information. The variance over-inflation (ratio 1.535) cannot be corrected without a multivariate constraint.
+
+\section{Future Work}
+
+\textbf{Adaptive diversity injection (AD-MIGA) --- implemented (C7).} Diversity injection fills 90\% of the population with random individuals at every generation. This is fixed regardless of population convergence, wasting budget late in a run when the elite pool has stabilised. AD-MIGA replaces the fixed rate with an exponential decay $\alpha(g) = \exp(-\lambda g/G)$, $\lambda=2.0$, shifting from full exploration at $g=0$ to 13.5\% injection at $g=G$. Results (Section~\ref{sec:ad_miga}) confirm that AD-MIGA achieves lower $F_r$ in fewer convergence generations, while the $F_r$--RMSE orthogonality remains intact.
+
+\textbf{Generalising C2 to neural methods --- Implemented (C8).} Corollary~\ref{cor:gain_orthogonal} extends the impossibility to GAIN, and the $\alpha$-sweep (Section~\ref{sec:gain_alpha_sweep}) confirms it empirically across all 5 datasets and 6 reconstruction weights. The extension to GRAPE \cite{You2020} remains open: its graph-based training mixes reconstruction and structural objectives, suggesting the same impossibility applies, but a formal proof and empirical sweep are needed to complete the universality argument across all neural imputation families.
+
+\textbf{Parallelisation --- Implemented.} The $Q$ independent runs share no state. We add \texttt{n\_jobs} to the MIGA constructor and implement parallel execution via \texttt{concurrent.futures.ProcessPoolExecutor} with \texttt{numpy.random.SeedSequence}-spawned seeds for reproducibility. Benchmarks across all 5 datasets (Q=2, G=200) confirm near-linear scaling: 1.94--1.98$\times$ speedup, consistent across all dimensionalities (Iris 8.7s $\to$ 4.4s, Wine 19.8s $\to$ 10.0s, Glass 19.4s $\to$ 9.8s, Haberman 8.9s $\to$ 4.6s, Wholesale 28.6s $\to$ 14.5s). At Q=6, wall-clock time reduces from $\sim$200s to $\sim$35s per seed.
+
+\textbf{Moment expansion.} Adding a kurtosis term $D_r(k_A, k_C)$ to $F_r$ could widen MIGA's already-observed kurtosis advantage. A longer-term alternative is replacing the three-moment $F_r$ with MMD or Wasserstein distance for a complete distributional comparison.
+
+\section{Summary}
+
+This thesis established six contributions:
+
+\begin{enumerate}
+    \item \textbf{MIGA can be faithfully reimplemented} (C1). The open-source Python implementation achieves paper-level results on five benchmark datasets.
+
+    \item \textbf{The $F_r$--RMSE orthogonality is formally provable and empirically confirmed} (C2). Propositions~\ref{prop:rmse_implies_fr}--\ref{prop:fr_implies_rmse} prove that no single imputation can jointly minimise both objectives. Every experiment confirms this: MIGA wins $F_r$ where it is competitive; MICE wins RMSE without exception.
+
+    \item \textbf{MIGA fails under directional MNAR in a characterisable and correctable way} (C3, C6). The $F_r \to$ RMSE inversion is the sharpest empirical confirmation of C2. IPW-$F_r$ partially corrects this when $n/p \geq 20$, reducing $F_r$ by up to 38\%.
+
+    \item \textbf{MIGA's $F_r$ advantage is real but bounded} (C4). MIGA wins $F_r$ on Iris, Haberman, and Wholesale ($p \leq 8$) with statistical significance. MICE wins RMSE on all five datasets.
+
+    \item \textbf{The failure mode depends jointly on $(p, \rho)$, not dimension alone} (C5). MIGA wins for $p \leq 13$ at $\rho \leq 0.6$; loses at $\rho = 0.9$ even for $p = 8$.
+
+    \item \textbf{MIGA's distributional advantage propagates to downstream utility under well-conditioned scope conditions.} On Haberman, MIGA is the only method to pass the KS test (40\% vs 0\%) and achieves 70\% CI coverage versus MICE's 10\%, at zero cost to classification accuracy.
+
+    \item \textbf{AD-MIGA achieves lower $F_r$ in fewer generations (C7).} Replacing the fixed 90\% diversity injection with exponential decay $\alpha(g) = \exp(-\lambda g/G)$ reduces convergence generation without degrading RMSE. The $F_r$--RMSE orthogonality is preserved across all three tested datasets.
+
+    \item \textbf{The $F_r$--RMSE impossibility is universal across neural methods (C8).} Corollary~\ref{cor:gain_orthogonal} extends C2 to GAIN. The empirical $\alpha$-sweep across 6 reconstruction weights and all 5 datasets confirms three failure regimes: monotone-but-off-frontier (Iris, Wine), training instability at high $\alpha$ (Haberman), and total MICE-domination (Glass). The impossibility holds universally across all $\alpha$ and all datasets.
+
+    \item \textbf{Parallel execution reduces wall-clock time by $Q\times$.} The \texttt{n\_jobs} parameter parallelises the $Q$ independent runs via \texttt{ProcessPoolExecutor}. Benchmarks on all 5 datasets confirm near-linear scaling (1.94--1.98$\times$ at Q=2). At Q=6, runtime falls from $\sim$200s to $\sim$35s per seed.
+\end{enumerate}
+
+The recommendation: use MIGA when the downstream analysis requires the correct distribution \emph{and} $p \lesssim 8$, $\rho \lesssim 0.6$, and feature variances are well-conditioned. Use MICE when minimum pointwise error or compute efficiency is required. No neural method mixing reconstruction and adversarial objectives provides a free lunch between the two extremes.

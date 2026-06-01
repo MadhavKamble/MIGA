@@ -1,0 +1,59 @@
+{
+  "Wholesale": {
+    "n": 440,
+    "p": 8,
+    "pct": 40,
+    "cols": [
+      "Channel",
+      "Region",
+      "Fresh",
+      "Milk",
+      "Grocery",
+      "Frozen",
+      "Detergents_Paper",
+      "Delicassen"
+    ],
+    "miss_cols": [
+      "Fresh",
+      "Milk",
+      "Detergents_Paper"
+    ],
+    "true_var": {
+      "Fresh": 159954927.42140713,
+      "Milk": 54469967.23892627,
+      "Detergents_Paper": 22732436.036399875
+    },
+    "Mean": {
+      "ratios": {
+        "Fresh": 0.5389555777368016,
+        "Milk": 0.7549384072170149,
+        "Detergents_Paper": 0.5597447207088485
+      },
+      "mean_ratio": 0.6178795685542217
+    },
+    "KNN": {
+      "ratios": {
+        "Fresh": 0.6208730805739447,
+        "Milk": 0.8900254196078599,
+        "Detergents_Paper": 0.7494882309029688
+      },
+      "mean_ratio": 0.7534622436949244
+    },
+    "MICE": {
+      "ratios": {
+        "Fresh": 0.7330578551447564,
+        "Milk": 0.9199395526623314,
+        "Detergents_Paper": 0.8729929666250571
+      },
+      "mean_ratio": 0.8419967914773817
+    },
+    "MIGA": {
+      "ratios": {
+        "Fresh": 0.8346380369952806,
+        "Milk": 0.9380620354088125,
+        "Detergents_Paper": 0.8485237318478365
+      },
+      "mean_ratio": 0.8737412680839766
+    }
+  }
+}
